@@ -30,7 +30,7 @@ class App extends React.Component{
     try{
         const ticketId = parseInt(this.state.ticketId)
         await ticketsale.methods.buyTicket(ticketId).send({
-      from: accounts[0], gasPrice: 1000000, gas: 500000
+      from: accounts[0], gasPrice: 8000000000, gas: 4700000
     });
     this.setState({message: 'transaction success'});
     
@@ -44,7 +44,7 @@ class App extends React.Component{
 
       searchaddress: event.target.value});
     await ticketsale.methods.getTicketOf(this.state.searchaddress).send({
-      from: accounts[0], gasPrice: 1000000000, gas: 5000000
+      from: accounts[0], gasPrice: 8000000000, gas: 4700000
     });
     
   };
@@ -54,7 +54,7 @@ class App extends React.Component{
 
        ticketId: event.target.value});
     await ticketsale.methods.offerSwap(this.state.ticketId).send({
-      from: accounts[0], gasPrice: 1000000000, gas: 5000000
+      from: accounts[0], gasPrice: 8000000000, gas: 4700000
     });
   };
   
@@ -64,7 +64,7 @@ class App extends React.Component{
 
       ticketId: event.target.value});
     await ticketsale.methods.acceptSwap(this.state.ticketId).send({
-      from: accounts[0], gasPrice: 1000000000, gas: 5000000
+      from: accounts[0], gasPrice: 8000000000, gas: 4700000
     });
   };
 
@@ -74,7 +74,7 @@ class App extends React.Component{
 
       ticketId: event.target.value});
     await ticketsale.methods.returnTicket(this.state.ticketId). send({
-      from: accounts[0], gasPrice: 1000000000, gas: 5000000
+      from: accounts[0], gasPrice: 8000000000, gas: 4700000
     });
   }
   render() {
