@@ -28,14 +28,13 @@ contract ticketsale {
 
  }
  function buyTicket(uint ticketId) public payable {
-    require(ticketId >= 0 && ticketId <= tickets && ticketId != 5,"Invalid Ticket");
+    require(ticketId >= 0 && ticketId <= tickets,"Invalid Ticket");
     require(ticketslist[ticketId].isNotavailable == false, "sorry ticket sold");
-    require(ticketslist[ticketId].takes == false, "you already own a ticket");
     require(msg.value == ticketPrice, "Incorrect payment amount");
 
     revenue += int256(ticketPrice);
-
-    ticketslist[ticketId] =  Tickets(manager,true,false,true);
+      payable(manager).transfer(msg.value);
+    ticketslist[ticketId] =  Tickets(msg.sender,true,false,true);
     ticketOf[msg.sender] = ticketId;
 
  }
@@ -47,7 +46,7 @@ contract ticketsale {
  }*/
 
  function offerSwap(uint ticketId) public {
-   require(ticketslist[ticketId].takes = true,"you must own a ticket");
+   require(ticketslist[ticketId].takes == true,"you must own a ticket");
     require(ticketslist[ticketId].beingOffer == false,"ticket already offer for swap");
 
     ticketslist[ticketId].beingOffer = true;
@@ -62,7 +61,7 @@ contract ticketsale {
         require(ticketslist[ticketId].beingOffer == true, "Ticket not offered for swap");
 
         uint partnerTicketId = ticketOf[msg.sender];
-        require(partnerTicketId > 0 && partnerTicketId != ticketId, "Invalid partner ticket");
+        require(partnerTicketId >= 0 && partnerTicketId != ticketId, "Invalid partner ticket");
 
         Tickets memory temp = ticketslist[partnerTicketId];
         ticketslist[partnerTicketId] = ticketslist[ticketId];
@@ -72,14 +71,14 @@ contract ticketsale {
  }
  function returnTicket(uint ticketId) public{
     require(ticketId >= 0 && ticketId <= tickets,"Invalid Ticket");
+    require(ticketslist[ticketId].isNotavailable == true, "your are required a ticket");
     bytes memory data;
     bool success;
 
     uint remanderAfterServiceFee = ticketPrice - ((90 * ticketPrice) / 100);
-    address customerReturn = ticketslist[ticketId].ticketowner;
-    (success,data) = customerReturn.call{value: remanderAfterServiceFee}("");
+    (success,data) = manager.call{value: remanderAfterServiceFee}("");
     revenue -= int(remanderAfterServiceFee);
-    ticketslist[ticketId] = Tickets(address(0), false, false, false);
+    ticketslist[ticketId] = Tickets(msg.sender,false, false, false);
         ticketOf[msg.sender] = 0;
 // TODO
  }
