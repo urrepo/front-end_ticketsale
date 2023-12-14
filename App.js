@@ -49,9 +49,15 @@ class App extends React.Component{
   }
   handlesubmit1  = async(event)=>{
     event.preventDefault();
-    alert('you have bought ticket')
+    
     const accoutns = await web3.eth.getAccounts();
-    await ticketsale.methods.buyTicket(this.state.ticketId).send({from:accoutns[0]});
+    try {
+      await ticketsale.methods.buyTicket(this.state.ticketId).send({from:accoutns[0]});
+    alert('you have bought ticket')
+    } catch (error) {
+      alert("transaction failed. please make sure you or someone hasn't already purchase the ticket")
+    }
+    
   }
   handlesubmit2  = async(event)=>{
     event.preventDefault();
