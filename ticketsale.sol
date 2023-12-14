@@ -10,7 +10,6 @@ contract ticketsale {
   int public revenue;
 
   struct Tickets{
-    address ticketowner;
     bool isNotavailable;
     bool beingOffer;
     // "takes" is the amount of attempts user has taken
@@ -24,7 +23,6 @@ contract ticketsale {
     ticketPrice = price;
     revenue = 0;
     manager = msg.sender;
-   
 
  }
  function buyTicket(uint ticketId) public payable {
@@ -34,9 +32,8 @@ contract ticketsale {
 
     revenue += int256(ticketPrice);
       payable(manager).transfer(msg.value);
-    ticketslist[ticketId] =  Tickets(msg.sender,true,false,true);
+    ticketslist[ticketId] =  Tickets(true,false,true);
     ticketOf[msg.sender] = ticketId;
-
  }
  function getTicketOf(address person) public view returns (uint) {
       return ticketOf[person];
@@ -46,8 +43,7 @@ contract ticketsale {
  }*/
 
  function offerSwap(uint ticketId) public {
-   require(ticketslist[ticketId].takes == true,"you must own a ticket");
-    require(ticketslist[ticketId].beingOffer == false,"ticket already offer for swap");
+   require(ticketOf[msg.sender] >0,"you must own a ticket");
 
     ticketslist[ticketId].beingOffer = true;
  }
@@ -72,14 +68,12 @@ contract ticketsale {
  function returnTicket(uint ticketId) public{
     require(ticketId >= 0 && ticketId <= tickets,"Invalid Ticket");
     require(ticketslist[ticketId].isNotavailable == true, "your are required a ticket");
-    bytes memory data;
-    bool success;
 
-    uint remanderAfterServiceFee = ticketPrice - ((90 * ticketPrice) / 100);
-    (success,data) = manager.call{value: remanderAfterServiceFee}("");
+    uint remanderAfterServiceFee = ticketPrice - (ticketPrice / 10);
     revenue -= int(remanderAfterServiceFee);
-    ticketslist[ticketId] = Tickets(msg.sender,false, false, false);
+    ticketslist[ticketId] = Tickets(false, false, false);
         ticketOf[msg.sender] = 0;
+        payable(msg.sender).transfer(remanderAfterServiceFee);
 // TODO
  }
 }

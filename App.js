@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React from 'react';
+import React, { memo } from 'react';
 import web3 from './web3';
 import ticketsale from './ticketsale';
 /*function App(){
@@ -13,133 +13,135 @@ class App extends React.Component{
   constructor(props){
     super(props)
     this.state={
-      ticketId: 0,
+      ticketId: '',
       searchaddress: '',
-      message: ''
+      message: '',
+      message2: '',
+      message3: '',
+      message4: '',
+      message5: ''
     }
     this.onButtonEnter = this.onButtonEnter.bind(this);
+    this.handlesubmit1 = this.handlesubmit1.bind(this);
     this.onButtonEnter2 = this.onButtonEnter2.bind(this);
+    this.handlesubmit2 = this.handlesubmit2.bind(this);
     this.onButtonEnter3 = this.onButtonEnter3.bind(this);
+    this.handlesubmit3 =  this.handlesubmit3.bind(this);
     this.onButtonEnter4 = this.onButtonEnter4.bind(this);
+    this.handlesubmit4 =  this.handlesubmit4.bind(this);
     this.onButtonEnter5 = this.onButtonEnter5.bind(this);
+    this.handlesubmit5 = this.handlesubmit5.bind(this);
   }
-
-  onButtonEnter= async (event) =>{
-    const accounts = await web3.eth.getAccounts();
+  onButtonEnter(event){
+    this.setState({ticketId: event.target.value});
+  }
+  onButtonEnter2=  async(event)=>{
+    this.setState({searchaddress: event.target.value});
+  }
+  onButtonEnter3(event){
+    this.setState({ticketId: event.target.value});
+  }
+  onButtonEnter4(event){
+    this.setState({ticketId: event.target.value});
+  }
+  onButtonEnter5(event){
+    this.setState({ticketId: event.target.value});
+  }
+  handlesubmit1  = async(event)=>{
     event.preventDefault();
-    try{
-        const ticketId = parseInt(this.state.ticketId)
-        await ticketsale.methods.buyTicket(ticketId).send({
-      from: accounts[0], gasPrice: 8000000000, gas: 4700000
-    });
-    this.setState({message: 'transaction success'});
-    
-  }catch(error){
-    this.setState({message: 'transaction failed'});
+    alert('you have bought ticket')
+    const accoutns = await web3.eth.getAccounts();
+    await ticketsale.methods.buyTicket(this.state.ticketId).send({from:accoutns[0]});
   }
-  };
-  onButtonEnter2= async(event)=>{
+  handlesubmit2  = async(event)=>{
+    event.preventDefault();
     const accounts = await web3.eth.getAccounts();
-    this.setState({
-
-      searchaddress: event.target.value});
-    await ticketsale.methods.getTicketOf(this.state.searchaddress).send({
-      from: accounts[0], gasPrice: 8000000000, gas: 4700000
-    });
-    
-  };
-  onButtonEnter3= async(event)=>{
-    const accounts = await web3.eth.getAccounts();
-    this.setState({
-
-       ticketId: event.target.value});
-    await ticketsale.methods.offerSwap(this.state.ticketId).send({
-      from: accounts[0], gasPrice: 8000000000, gas: 4700000
-    });
-  };
-  
-  onButtonEnter4= async(event)=>{
-    const accounts = await web3.eth.getAccounts();
-    this.setState({
-
-      ticketId: event.target.value});
-    await ticketsale.methods.acceptSwap(this.state.ticketId).send({
-      from: accounts[0], gasPrice: 8000000000, gas: 4700000
-    });
-  };
-
-  onButtonEnter5= async(event)=>{
-    const accounts = await web3.eth.getAccounts();
-    this.setState({
-
-      ticketId: event.target.value});
-    await ticketsale.methods.returnTicket(this.state.ticketId). send({
-      from: accounts[0], gasPrice: 8000000000, gas: 4700000
-    });
+    const ticketId = await ticketsale.methods.getTicketOf(this.state.searchaddress).call();
+    alert(`this person has ${ticketId}`)
   }
+  handlesubmit3  = async(event)=>{
+    event.preventDefault();
+    const accounts =  await web3.eth.getAccounts();
+    try {
+      await ticketsale.methods.offerSwap(this.state.ticketId).send({from: accounts[0]});
+    alert('you have offered ticket')
+    } catch (error) {
+      alert('offer swap transaction has failed')
+    }
+    
+  }
+  handlesubmit4  = async(event)=>{
+    event.preventDefault();
+    const accounts = await web3.eth.getAccounts();
+    try {
+      await ticketsale.methods.offerSwap(this.state.ticketId).send({from: accounts[0]});
+    alert('you have accept ticket')
+    } catch (error) {
+      alert("accter swap transaction has failed")
+    }
+    
+  }
+  handlesubmit5  = async(event)=>{
+    event.preventDefault();
+    const accounts = await web3.eth.getAccounts();
+    await ticketsale.methods.returnTicket(this.state.ticketId).send({from: accounts[0]});alert('you have return ticket')
+  }
+
   render() {
-    console.log(this.state.message)
     return (
       <div>
         <h1 id='topTitla'>Ticket Shop</h1>
-        <form>
+        <form onSubmit={this.handlesubmit1}>
           <input
             id='buyTicketEntry'
             placeholder='Enter Ticket Id'
-            onChange={(myevent) =>
-              this.setState({ ticketId: myevent.target.value })
+            onChange={this.onButtonEnter
             }
           />
-          <button id='buyTicket' onClick={this.onButtonEnter}>
+          <button id='buyTicket'>
             buy Ticket
           </button>
         </form>
-        <h2 id='notify'>{this.state.message}</h2>
-        <form>
+        <form onSubmit={this.handlesubmit2}>
           <input
             id='getTicketEntry'
             placeholder='Enter Address'
-            onChange={(myevent) =>
-              this.setState({ searchaddress: myevent.target.value })
-            }
+            onChange={this.onButtonEnter2}
           />
-          <button id='getTicket' onClick={this.onButtonEnter2}>
+          <button id='getTicket'>
             Get Ticket Status
           </button>
         </form>
-        <form>
+        <form onSubmit={this.handlesubmit3}>
           <input
             id='offerTicketEntry'
             placeholder='Enter Ticket Id'
-            onChange={(myevent) =>
-              this.setState({ ticketId: myevent.target.value })
+            onChange={this.onButtonEnter3
             }
           />
-          <button id='offerTicket' onClick={this.onButtonEnter3}>
+          <button id='offerTicket'>
             Offer Ticket
           </button>
         </form>
-        <form>
+        <form onSubmit={this.handlesubmit4}>
           <input
             id='acceptTicketEntry'
             placeholder='Enter Ticket Id'
-            onChange={(myevent) =>
-              this.setState({ ticketId: myevent.target.value })
+            onChange={this.onButtonEnter4
             }
           />
-          <button id='acceptTicket' onClick={this.onButtonEnter4}>
+          <button id='acceptTicket'>
             Accept Ticket
           </button>
         </form>
-        <form>
+        <form onSubmit={this.handlesubmit5}>
           <input
             id='returnTicketEntry'
             placeholder='Enter Ticket Id'
-            onChange={(myevent) =>
-              this.setState({ ticketId: myevent.target.value })
+            onChange={this.onButtonEnter5
             }
           />
-          <button id='returnTicket' onClick={this.onButtonEnter5}>
+          <button id='returnTicket'>
             Return Ticket
           </button>
         </form>

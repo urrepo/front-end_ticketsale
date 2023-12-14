@@ -22,7 +22,7 @@ const deploy = async () => {
   console.log('Attempting to deploy from account', accounts[0]);
 
 let ticketsale = await new web3.eth.Contract(abi)
-    .deploy({ data: bytecode, arguments: [100000,0],})
+    .deploy({ data: bytecode, arguments: [100,0],})
     .send({ from: accounts[0], gasPrice: 800000000, gas: 4000000});
 
   console.log('Contract deployed to', ticketsale.options.address);
